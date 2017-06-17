@@ -7,7 +7,8 @@ import lombok.Setter;
 
 public abstract class TimeSeriesCompressor {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private int threshold;
 
     public TimeSeriesCompressor(int threshold) {

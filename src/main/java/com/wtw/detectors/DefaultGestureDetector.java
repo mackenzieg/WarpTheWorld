@@ -6,11 +6,9 @@ import com.wtw.timeseries.TimeSeriesPoint;
 
 public class DefaultGestureDetector extends GestureDetector {
 
-    private TimeSeries timeSeries;
-
     public final float SLOPE_THRESHOLD;
     public final long TIME_THRESHOLD;
-
+    private TimeSeries timeSeries;
     private boolean triggered = false;
 
     private long lastTimeBelowThreshold = System.nanoTime();

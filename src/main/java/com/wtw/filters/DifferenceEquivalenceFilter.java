@@ -9,7 +9,8 @@ import lombok.Setter;
  */
 public class DifferenceEquivalenceFilter extends Filter {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private double sensitivity;
     private float[] previous;
 
@@ -36,7 +37,7 @@ public class DifferenceEquivalenceFilter extends Filter {
             this.previous = vector;
             return vector;
         }
-        return new float[] {0.0f, 0.0f, 0.0f};
+        return new float[]{0.0f, 0.0f, 0.0f};
     }
 
     @Override

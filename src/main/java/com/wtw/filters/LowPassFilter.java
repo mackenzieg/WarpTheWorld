@@ -1,16 +1,13 @@
 package com.wtw.filters;
 
-import java.util.Arrays;
-
 /*
  * Integrate to smooth out high frequency
  */
 public class LowPassFilter extends Filter {
 
-    private float[] previous;
-
     private final double TIME_CONSTANT = 0.10;
     private final int COUNT_BEFORE_UPDATE = 1;
+    private float[] previous;
     private double alpha = 0.95;
     private double deltaTime = 0.0;
 
@@ -25,18 +22,16 @@ public class LowPassFilter extends Filter {
 
     @Override
     public float[] filterAlgorithm(float[] vector) {
-        if (startTime == 0.0)
-        {
+        if (startTime == 0.0) {
             startTime = System.nanoTime();
         }
 
         deltaTime = 1.0 / (count++ / ((System.nanoTime() - startTime) / 1000000000.0));
         alpha = TIME_CONSTANT / (TIME_CONSTANT + deltaTime);
 
-        if (count > COUNT_BEFORE_UPDATE)
-        {
+        if (count > COUNT_BEFORE_UPDATE) {
             for (int i = 0; i < this.getDimensions(); ++i) {
-                previous[i] = (float)(alpha * previous[i] + (1 - alpha) * vector[i]);
+                previous[i] = (float) (alpha * previous[i] + (1 - alpha) * vector[i]);
             }
         }
 

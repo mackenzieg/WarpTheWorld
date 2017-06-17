@@ -7,7 +7,8 @@ import lombok.Setter;
 
 public abstract class GestureDetector {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private Device device;
 
     @Getter
