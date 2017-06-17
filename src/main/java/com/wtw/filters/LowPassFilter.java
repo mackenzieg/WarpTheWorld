@@ -35,9 +35,9 @@ public class LowPassFilter extends Filter {
 
         if (count > COUNT_BEFORE_UPDATE)
         {
-            previous[0] = (float)(alpha * previous[0] + (1 - alpha) * vector[0]);
-            previous[1] = (float)(alpha * previous[1] + (1 - alpha) * vector[1]);
-            previous[2] = (float)(alpha * previous[2] + (1 - alpha) * vector[2]);
+            for (int i = 0; i < this.getDimensions(); ++i) {
+                previous[i] = (float)(alpha * previous[i] + (1 - alpha) * vector[i]);
+            }
         }
 
         return previous;
@@ -45,8 +45,9 @@ public class LowPassFilter extends Filter {
 
     @Override
     public void reset() {
-        float[] resetValues = new float[this.getDimensions()];
-
-        this.previous = new float[]{0.0f, 0.0f, 0.0f};
+        this.previous = new float[this.getDimensions()];
+        for (int i = 0; i < this.getDimensions(); ++i) {
+            this.previous[i] = 0.0f;
+        }
     }
 }

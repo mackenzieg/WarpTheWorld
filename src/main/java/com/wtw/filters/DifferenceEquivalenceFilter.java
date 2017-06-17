@@ -41,6 +41,9 @@ public class DifferenceEquivalenceFilter extends Filter {
 
     @Override
     public void reset() {
-        this.previous = new float[]{0.0f, 0.0f, 0.0f};
+        this.previous = new float[this.getDimensions()];
+        for (int i = 0; i < this.getDimensions(); ++i) {
+            this.previous[i] = 0.0f;
+        }
     }
 }
