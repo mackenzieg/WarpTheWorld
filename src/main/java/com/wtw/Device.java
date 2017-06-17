@@ -7,7 +7,6 @@ import com.wtw.detectors.GestureDetector;
 import com.wtw.event.EventBus;
 import com.wtw.event.events.PostFilterEvent;
 import com.wtw.event.events.RecordedTimeSeriesEvent;
-import com.wtw.event.events.StartCompressionEvent;
 import com.wtw.event.events.StartFilteringEvent;
 import com.wtw.filters.Filter;
 import com.wtw.timeseries.TimeSeries;
