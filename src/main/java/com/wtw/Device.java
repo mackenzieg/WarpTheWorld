@@ -3,22 +3,20 @@ package com.wtw;
 import com.google.common.base.Preconditions;
 import com.wtw.compression.TimeSeriesCompressor;
 import com.wtw.detectors.GestureDetector;
-import com.wtw.event.Event;
 import com.wtw.event.EventBus;
 import com.wtw.event.events.PostFilterEvent;
+import com.wtw.event.events.RecordedTimeSeriesEvent;
 import com.wtw.event.events.StartFilteringEvent;
 import com.wtw.filters.Filter;
 import com.wtw.timeseries.TimeSeries;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 public class Device {
 
     private ArrayList<Filter> filters = new ArrayList<Filter>();
     private ArrayList<TimeSeriesCompressor> compressors = new ArrayList<TimeSeriesCompressor>();
-    private GestureDetector gestureDetector;
+    private GestureDetector gestureDetector = null;
 
     private final EventBus eventBus = new EventBus();
 
@@ -34,21 +32,18 @@ public class Device {
             PostFilterEvent postFilterEvent = new PostFilterEvent(originalValues, filteredValues);
             this.eventBus.post(postFilterEvent);
         }
+
+        this.gestureDetector.newMeasurement(values, time);
     }
 
     public void measuredSeries(TimeSeries timeSeries) {
-
+        this.eventBus.post(new RecordedTimeSeriesEvent(timeSeries));
     }
 
-    public Device setGestureDetector(Class<? extends GestureDetector> detector) {
-        Preconditions.checkNotNull(detector);
-        try {
-            Constructor constructor = detector.getConstructor(this.getClass());
-            constructor.setAccessible(true);
-            this.gestureDetector = (GestureDetector) constructor.newInstance(this);
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
+    public Device setGestureDetector(GestureDetector gestureDetector) {
+        Preconditions.checkNotNull(gestureDetector);
+        gestureDetector.setDevice(this);
+        this.gestureDetector = gestureDetector;
         return this;
     }
 
@@ -65,6 +60,10 @@ public class Device {
     public Device addCompressor(TimeSeriesCompressor compressor) {
         this.compressors.add(compressor);
         return this;
+    }
+
+    public final class BuiltClass {
+
     }
 
 }
