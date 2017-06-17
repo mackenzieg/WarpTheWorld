@@ -28,7 +28,7 @@ public class DifferenceEquivalenceFilter extends Filter {
     public float[] filterAlgorithm(float[] vector) {
         boolean accept = false;
 
-        for (int i = 0; i < vector.length; ++i) {
+        for (int i = 0; i < this.getDimensions(); ++i) {
             if (vector[i] < previous[i] - this.sensitivity
                     || vector[i] > previous[i] + this.sensitivity) {
                 accept = true;
@@ -40,7 +40,13 @@ public class DifferenceEquivalenceFilter extends Filter {
             return vector;
         }
 
-        return new float[]{0.0f, 0.0f, 0.0f};
+        float[] defaultVals = new float[this.getDimensions()];
+
+        for (int i = 0; i < this.getDimensions(); ++i) {
+            defaultVals[i] = 0.0f;
+        }
+
+        return defaultVals;
     }
 
     @Override
