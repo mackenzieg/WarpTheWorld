@@ -14,12 +14,12 @@ public class DifferenceEquivalenceFilter extends Filter {
     private double sensitivity;
     private float[] previous;
 
-    public DifferenceEquivalenceFilter() {
-        this(0.2f);
+    public DifferenceEquivalenceFilter(int dimensions) {
+        this(dimensions, 0.2f);
     }
 
-    public DifferenceEquivalenceFilter(double sensitivity) {
-        super();
+    public DifferenceEquivalenceFilter(int dimensions, double sensitivity) {
+        super(dimensions);
         this.sensitivity = sensitivity;
         this.reset();
     }
