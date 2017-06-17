@@ -53,20 +53,6 @@ public class TimeSeriesPoint {
         return new TimeSeriesPoint(newPoints, newTime);
     }
 
-    public float getDistance(TimeSeriesPoint timeSeriesPoint) {
-        return getDistance(timeSeriesPoint.getDimensions());
-    }
-
-    public float getDistance(float[] points) {
-        Preconditions.checkArgument(this.size() == points.length, "Can't compare points with different number of dimensions.");
-        Preconditions.checkNotNull(this.dimensions);
-        float sum = 0.0f;
-        for (int i = 0; i < points.length; ++i) {
-            sum += Math.pow(this.dimensions[i] - points[i], 2);
-        }
-        return (float) Math.sqrt(sum);
-    }
-
     @Override
     public String toString() {
         String formatted = "(";
