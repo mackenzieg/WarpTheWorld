@@ -30,7 +30,7 @@ public class BuiltDevice {
         this.gestureDetector = gestureDetector;
         this.eventBus = eventBus;
         this.compressionManager = new CompressionManager(this.eventBus);
-        this.eventBus.register(this);
+//        this.eventBus.register(this);
         this.gestureDetector.setDevice(this);
         this.compressionManager.start();
     }

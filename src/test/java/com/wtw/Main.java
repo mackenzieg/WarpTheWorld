@@ -22,8 +22,7 @@ public class Main {
                 .addFilter(new DifferenceEquivalenceFilter(3))
                 .setGestureDetector(new DefaultGestureDetector(new EuclideanDistance()))
                 .registerListener(new EventListener() {
-                    @EventHandler
-                    public void getCompressed(PostCompressionEvent postCompressionEvent) {
+                    @EventHandler public void getCompressed(PostCompressionEvent postCompressionEvent) {
                         System.out.println(postCompressionEvent.getAfter().toString());
                     }
                 })

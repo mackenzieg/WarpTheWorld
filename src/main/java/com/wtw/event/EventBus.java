@@ -12,9 +12,6 @@ public class EventBus {
     private final Map<Class<?>, List<EventHandlerMethod>> listeners = new HashMap<Class<?>, List<EventHandlerMethod>>();
 
     public void post(Object event) {
-
-        System.out.println(event);
-
         List<EventHandlerMethod> handlers = listeners.get(event.getClass());
 
         if (handlers == null) {
@@ -30,6 +27,7 @@ public class EventBus {
         }
     }
 
+    // TODO eventually check that class extends EventListener and have priority
     public void register(Object listener) {
         for (Method method : listener.getClass().getDeclaredMethods()) {
             EventHandler annotation = method.getAnnotation(EventHandler.class);
@@ -44,6 +42,8 @@ public class EventBus {
                 Class<?> eventType = params[0];
 
                 this.listeners.putIfAbsent(eventType, new ArrayList<EventHandlerMethod>());
+
+                method.setAccessible(true);
 
                 this.listeners.get(eventType).add(new EventHandlerMethod(listener, method));
             }

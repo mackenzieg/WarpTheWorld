@@ -18,7 +18,6 @@ public class Device {
 
     public Device() {
         this.compressionManager.start();
-        this.eventBus.register(this);
     }
 
     public Device setGestureDetector(GestureDetector gestureDetector) {
