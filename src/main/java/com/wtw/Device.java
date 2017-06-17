@@ -17,7 +17,6 @@ public class Device {
     private CompressionManager compressionManager = new CompressionManager(eventBus);
 
     public Device() {
-        this.compressionManager.start();
     }
 
     public Device setGestureDetector(GestureDetector gestureDetector) {
@@ -42,7 +41,7 @@ public class Device {
     }
 
     public BuiltDevice build() {
-        return new BuiltDevice(this.eventBus, this.filters, this.gestureDetector);
+        return new BuiltDevice(this.eventBus, this.filters, this.gestureDetector, this.compressionManager);
     }
 
 }

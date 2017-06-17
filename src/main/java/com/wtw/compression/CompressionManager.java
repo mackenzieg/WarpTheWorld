@@ -42,6 +42,7 @@ public class CompressionManager extends Thread {
             TimeSeries before = new TimeSeries(after);
 
             if (!startCompressionEvent.isCancelled()) {
+                System.out.println();
                 for (TimeSeriesCompressor timeSeriesCompressor : compressors) {
                     after = timeSeriesCompressor.compress(after);
                 }

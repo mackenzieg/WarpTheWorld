@@ -24,12 +24,12 @@ public class BuiltDevice {
     @Getter
     private CompressionManager compressionManager;
 
-    public BuiltDevice(EventBus eventBus, ArrayList<Filter> filters, GestureDetector gestureDetector) {
+    public BuiltDevice(EventBus eventBus, ArrayList<Filter> filters, GestureDetector gestureDetector, CompressionManager compressionManager) {
         Preconditions.checkNotNull(gestureDetector, "Must define a gesture detector.");
         this.filters = filters;
         this.gestureDetector = gestureDetector;
         this.eventBus = eventBus;
-        this.compressionManager = new CompressionManager(this.eventBus);
+        this.compressionManager = compressionManager;
 //        this.eventBus.register(this);
         this.gestureDetector.setDevice(this);
         this.compressionManager.start();
