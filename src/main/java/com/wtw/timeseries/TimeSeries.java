@@ -8,7 +8,8 @@ public class TimeSeries {
 
     private ArrayList<TimeSeriesPoint> points = new ArrayList<TimeSeriesPoint>();
 
-    public TimeSeries() {}
+    public TimeSeries() {
+    }
 
     public TimeSeries(TimeSeries other) {
         this.points = (ArrayList<TimeSeriesPoint>) other.points.clone();

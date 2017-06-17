@@ -48,6 +48,10 @@ public class CompressionManager extends Thread {
         this.eventBus.post(postCompressionEvent);
     }
 
+    public void addSeries(TimeSeries timeSeries) {
+        this.queuedCompressions.add(timeSeries);
+    }
+
     public void addCompressor(TimeSeriesCompressor compressor) {
         Preconditions.checkNotNull(compressor);
         this.compressors.add(compressor);

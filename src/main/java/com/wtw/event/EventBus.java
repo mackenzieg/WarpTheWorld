@@ -21,9 +21,7 @@ public class EventBus {
         for (EventHandlerMethod method : handlers) {
             try {
                 method.invoke(event);
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
+            } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
@@ -42,9 +40,7 @@ public class EventBus {
 
                 Class<?> eventType = params[0];
 
-                if (this.listeners.get(eventType) == null) {
-                    this.listeners.put(eventType, new ArrayList<EventHandlerMethod>());
-                }
+                this.listeners.putIfAbsent(eventType, new ArrayList<EventHandlerMethod>());
 
                 this.listeners.get(eventType).add(new EventHandlerMethod(listener, method));
             }
