@@ -16,36 +16,40 @@ public class CompressionManager extends Thread {
 
     private EventBus eventBus;
 
+    private boolean complete = false;
+
     public CompressionManager(EventBus eventBus) {
         this.eventBus = eventBus;
     }
 
     @Override
     public void run() {
-        if (queuedCompressions.size() == 0) {
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+        while(!complete) {
+            if (queuedCompressions.size() == 0) {
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                continue;
             }
-            return;
-        }
 
-        StartCompressionEvent startCompressionEvent = new StartCompressionEvent();
-        this.eventBus.post(startCompressionEvent);
+            StartCompressionEvent startCompressionEvent = new StartCompressionEvent();
+            this.eventBus.post(startCompressionEvent);
 
-        TimeSeries after = queuedCompressions.removeFirst();
+            TimeSeries after = queuedCompressions.removeFirst();
 
-        TimeSeries before = new TimeSeries(after);
+            TimeSeries before = new TimeSeries(after);
 
-        if (!startCompressionEvent.isCancelled()) {
-            for (TimeSeriesCompressor timeSeriesCompressor : compressors) {
-                after = timeSeriesCompressor.compress(after);
+            if (!startCompressionEvent.isCancelled()) {
+                for (TimeSeriesCompressor timeSeriesCompressor : compressors) {
+                    after = timeSeriesCompressor.compress(after);
+                }
             }
-        }
 
-        PostCompressionEvent postCompressionEvent = new PostCompressionEvent(before, after);
-        this.eventBus.post(postCompressionEvent);
+            PostCompressionEvent postCompressionEvent = new PostCompressionEvent(before, after);
+            this.eventBus.post(postCompressionEvent);
+        }
     }
 
     public void addSeries(TimeSeries timeSeries) {

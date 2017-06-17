@@ -32,6 +32,7 @@ public class BuiltDevice {
         this.compressionManager = new CompressionManager(this.eventBus);
         this.eventBus.register(this);
         this.gestureDetector.setDevice(this);
+        this.compressionManager.start();
     }
 
     @EventHandler
@@ -41,6 +42,7 @@ public class BuiltDevice {
 
     public BuiltDevice measuredSeries(TimeSeries timeSeries) {
         this.eventBus.post(new RecordedTimeSeriesEvent(timeSeries));
+        this.compressionManager.addSeries(timeSeries);
         return this;
     }
 

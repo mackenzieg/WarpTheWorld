@@ -12,6 +12,9 @@ public class EventBus {
     private final Map<Class<?>, List<EventHandlerMethod>> listeners = new HashMap<Class<?>, List<EventHandlerMethod>>();
 
     public void post(Object event) {
+
+        System.out.println(event);
+
         List<EventHandlerMethod> handlers = listeners.get(event.getClass());
 
         if (handlers == null) {
