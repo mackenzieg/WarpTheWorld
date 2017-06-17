@@ -28,15 +28,18 @@ public class DifferenceEquivalenceFilter extends Filter {
     public float[] filterAlgorithm(float[] vector) {
         boolean accept = false;
 
-        if (vector[0] < previous[0] - this.sensitivity ||
-                vector[0] > previous[0] + this.sensitivity ||
-                vector[1] < previous[1] - this.sensitivity ||
-                vector[1] > previous[1] + this.sensitivity ||
-                vector[2] < previous[2] - this.sensitivity ||
-                vector[2] > previous[2] + this.sensitivity) {
+        for (int i = 0; i < vector.length; ++i) {
+            if (vector[i] < previous[i] - this.sensitivity
+                    || vector[i] > previous[i] + this.sensitivity) {
+                accept = true;
+            }
+        }
+
+        if (accept) {
             this.previous = vector;
             return vector;
         }
+
         return new float[]{0.0f, 0.0f, 0.0f};
     }
 
