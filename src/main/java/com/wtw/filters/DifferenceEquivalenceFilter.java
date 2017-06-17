@@ -25,6 +25,8 @@ public class DifferenceEquivalenceFilter extends Filter {
 
     @Override
     public float[] filterAlgorithm(float[] vector) {
+        boolean accept = false;
+
         if (vector[0] < previous[0] - this.sensitivity ||
                 vector[0] > previous[0] + this.sensitivity ||
                 vector[1] < previous[1] - this.sensitivity ||

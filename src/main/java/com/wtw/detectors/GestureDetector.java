@@ -1,6 +1,6 @@
 package com.wtw.detectors;
 
-import com.wtw.events.EventBus;
+import com.wtw.event.EventBus;
 
 public abstract class GestureDetector {
 

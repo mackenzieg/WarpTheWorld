@@ -1,5 +1,7 @@
 package com.wtw.filters;
 
+import java.util.Arrays;
+
 /*
  * Integrate to smooth out high frequency
  */
@@ -16,8 +18,8 @@ public class LowPassFilter extends Filter {
 
     private int count = 0;
 
-    public LowPassFilter() {
-        super();
+    public LowPassFilter(int dimensions) {
+        super(dimensions);
         this.reset();
     }
 
@@ -43,6 +45,8 @@ public class LowPassFilter extends Filter {
 
     @Override
     public void reset() {
+        float[] resetValues = new float[this.getDimensions()];
+
         this.previous = new float[]{0.0f, 0.0f, 0.0f};
     }
 }
