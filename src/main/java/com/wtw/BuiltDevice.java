@@ -5,6 +5,7 @@ import com.wtw.compression.CompressionManager;
 import com.wtw.detectors.GestureDetector;
 import com.wtw.event.EventBus;
 import com.wtw.event.EventHandler;
+import com.wtw.event.EventListener;
 import com.wtw.event.events.PostCompressionEvent;
 import com.wtw.event.events.PostFilterEvent;
 import com.wtw.event.events.RecordedTimeSeriesEvent;
@@ -15,7 +16,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 
-public class BuiltDevice {
+public class BuiltDevice extends EventListener {
     @Getter
     private final EventBus eventBus;
     private ArrayList<Filter> filters = new ArrayList<>();
@@ -30,13 +31,13 @@ public class BuiltDevice {
         this.gestureDetector = gestureDetector;
         this.eventBus = eventBus;
         this.compressionManager = compressionManager;
-//        this.eventBus.register(this);
+        this.eventBus.register(this);
         this.gestureDetector.setDevice(this);
         this.compressionManager.start();
     }
 
     @EventHandler
-    public void postCompressionListener(PostCompressionEvent event) {
+    public void postCompression(PostCompressionEvent postCompressionEvent) {
 
     }
 

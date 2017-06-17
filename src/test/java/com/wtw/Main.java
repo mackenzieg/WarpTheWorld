@@ -17,14 +17,15 @@ public class Main {
 
     public static void main(String[] args) {
         BuiltDevice builtDevice = new Device()
-                .addCompressor(new MeanCompressor())
+                .addCompressor(new MeanCompressor(5))
                 .addFilter(new LowPassFilter(3))
                 .addFilter(new DifferenceEquivalenceFilter(3))
                 .setGestureDetector(new DefaultGestureDetector(new EuclideanDistance()))
                 .registerListener(new EventListener() {
                     @EventHandler
                     public void getCompressed(PostCompressionEvent postCompressionEvent) {
-                        System.out.println(postCompressionEvent.getAfter().size());
+                        System.out.println("After");
+                        System.out.println(postCompressionEvent.getAfter().toString());
                     }
                 })
                 .build();
@@ -32,12 +33,15 @@ public class Main {
         TimeSeries timeSeries = new TimeSeries();
 
         Random random = new Random();
-        for (int i = 0; i < 200; ++i) {
+        for (int i = 0; i < 10; ++i) {
             timeSeries.addPoint(new TimeSeriesPoint(new float[] {
                     random.nextFloat(),
                     random.nextFloat(),
                     random.nextFloat()}));
         }
+
+        System.out.println("Before");
+        System.out.println(timeSeries.toString());
 
         builtDevice.measuredSeries(timeSeries);
 

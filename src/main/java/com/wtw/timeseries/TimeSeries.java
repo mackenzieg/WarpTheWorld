@@ -28,4 +28,17 @@ public class TimeSeries {
         return this.points.size();
     }
 
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < this.points.size(); ++i) {
+            stringBuilder.append(this.points.get(i).toString());
+
+            if (i < this.points.size() - 1) {
+                stringBuilder.append(",");
+            }
+        }
+        return stringBuilder.toString();
+    }
+
 }

@@ -55,10 +55,14 @@ public class TimeSeriesPoint {
 
     @Override
     public String toString() {
-        String formatted = "(";
+        StringBuilder stringBuilder = new StringBuilder("(");
+
         for (int i = 0; i < this.size(); ++i) {
-            formatted.concat(dimensions[i] + ",");
+            stringBuilder.append(dimensions[i])
+                    .append(",");
         }
-        return formatted + this.time + ")";
+        stringBuilder.append(this.time);
+        stringBuilder.append(")");
+        return stringBuilder.toString();
     }
 }

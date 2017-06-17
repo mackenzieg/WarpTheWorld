@@ -5,6 +5,8 @@ import com.wtw.event.EventBus;
 import com.wtw.event.events.PostCompressionEvent;
 import com.wtw.event.events.StartCompressionEvent;
 import com.wtw.timeseries.TimeSeries;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,8 +16,10 @@ public class CompressionManager extends Thread {
     private LinkedList<TimeSeries> queuedCompressions = new LinkedList<>();
     private ArrayList<TimeSeriesCompressor> compressors = new ArrayList<TimeSeriesCompressor>();
 
+    @Getter
     private EventBus eventBus;
 
+    @Getter @Setter
     private boolean complete = false;
 
     public CompressionManager(EventBus eventBus) {
