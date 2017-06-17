@@ -6,8 +6,6 @@ import com.wtw.timeseries.TimeSeriesPoint;
 
 public class MeanCompressor extends TimeSeriesCompressor {
 
-    private int threshold;
-
     public MeanCompressor() {
         this(40);
     }
@@ -18,7 +16,7 @@ public class MeanCompressor extends TimeSeriesCompressor {
 
     public TimeSeries compress(TimeSeries timeSeries) {
         Preconditions.checkNotNull(timeSeries);
-        if (timeSeries.size() <= this.threshold) {
+        if (timeSeries.size() <= this.getThreshold()) {
             return timeSeries;
         }
 
