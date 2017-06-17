@@ -23,10 +23,7 @@ public class MeanCompressor extends TimeSeriesCompressor {
         TimeSeries compressedSeries = new TimeSeries();
 
         for (int i = 0; i < timeSeries.size(); i += 2) {
-            if (i - 1 > timeSeries.size()) {
-                compressedSeries.addPoint(new TimeSeriesPoint());
-                break;
-            } else {
+            if (i < timeSeries.size() - 1) {
                 compressedSeries.addPoint(timeSeries.getPoint(i).averagePoints(timeSeries.getPoint(i + 1)));
             }
         }

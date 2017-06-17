@@ -18,7 +18,7 @@ public class Main {
     public static void main(String[] args) {
         BuiltDevice builtDevice = new Device()
                 .addCompressor(new MeanCompressor(5))
-                .addFilter(new LowPassFilter(3))
+                .addFilter(new LowPassFilter(1))
                 .addFilter(new DifferenceEquivalenceFilter(3))
                 .setGestureDetector(new DefaultGestureDetector(new EuclideanDistance()))
                 .registerListener(new EventListener() {
@@ -33,11 +33,9 @@ public class Main {
         TimeSeries timeSeries = new TimeSeries();
 
         Random random = new Random();
-        for (int i = 0; i < 10; ++i) {
-            timeSeries.addPoint(new TimeSeriesPoint(new float[] {
-                    random.nextFloat(),
-                    random.nextFloat(),
-                    random.nextFloat()}));
+        for (int i = 0; i < 11; ++i) {
+            timeSeries.addPoint(new TimeSeriesPoint(new float[]{
+                    random.nextFloat()}, i));
         }
 
         System.out.println("Before");
@@ -45,7 +43,7 @@ public class Main {
 
         builtDevice.measuredSeries(timeSeries);
 
-        while(true) {
+        while (true) {
 
         }
     }
