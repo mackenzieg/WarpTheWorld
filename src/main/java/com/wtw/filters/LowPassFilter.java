@@ -12,7 +12,6 @@ public class LowPassFilter extends Filter {
     private double alpha = 0.95;
     private double deltaTime = 0.0;
 
-    private double timeStamp = System.nanoTime();
     private double startTime = 0.0;
 
     private int count = 0;
@@ -29,8 +28,7 @@ public class LowPassFilter extends Filter {
             startTime = System.nanoTime();
         }
 
-        timeStamp = System.nanoTime();
-        deltaTime = 1.0 / (count++ / ((timeStamp - startTime) / 1000000000.0));
+        deltaTime = 1.0 / (count++ / ((System.nanoTime() - startTime) / 1000000000.0));
         alpha = TIME_CONSTANT / (TIME_CONSTANT + deltaTime);
 
         if (count > COUNT_BEFORE_UPDATE)

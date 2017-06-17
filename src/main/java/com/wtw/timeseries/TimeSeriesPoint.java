@@ -11,9 +11,9 @@ public class TimeSeriesPoint {
     @Getter
     private long time;
 
-    public TimeSeriesPoint(float[] dimensions, long time) {
-        this.dimensions = dimensions;
-        this.time = time;
+    public TimeSeriesPoint() {
+        this.dimensions = new float[0];
+        this.time = System.nanoTime();
     }
 
     public TimeSeriesPoint(float[] dimensions) {
@@ -21,21 +21,36 @@ public class TimeSeriesPoint {
         this.time = System.nanoTime();
     }
 
-    public TimeSeriesPoint() {
-        this.dimensions = new float[0];
-        this.time = System.nanoTime();
+    public TimeSeriesPoint(float[] dimensions, long time) {
+        this.dimensions = dimensions;
+        this.time = time;
     }
 
-    public int dimensionSize() {
+    public TimeSeriesPoint(TimeSeriesPoint point) {
+        this.dimensions = point.getDimensions();
+        this.time = point.getTime();
+    }
+
+    public int size() {
         Preconditions.checkNotNull(this.dimensions);
 
         return this.dimensions.length;
     }
 
     public float getDimension(int index) {
-        Preconditions.checkPositionIndex(index, this.dimensionSize());
+        Preconditions.checkPositionIndex(index, this.size());
 
         return dimensions[index];
+    }
+
+    public TimeSeriesPoint averagePoints(TimeSeriesPoint timeSeriesPoint) {
+        Preconditions.checkArgument(timeSeriesPoint.size() == this.size(), "TimeSeriesPoint must have same number of dimensions to average.");
+        float[] newPoints = new float[this.size()];
+        for (int i = 0; i < this.size(); ++i) {
+            newPoints[i] = (this.dimensions[i] + timeSeriesPoint.getDimension(i)) / 2;
+        }
+        long newTime = (this.time + timeSeriesPoint.getTime()) / 2;
+        return new TimeSeriesPoint(newPoints, newTime);
     }
 
     public float getDistance(TimeSeriesPoint timeSeriesPoint) {
@@ -43,7 +58,7 @@ public class TimeSeriesPoint {
     }
 
     public float getDistance(float[] points) {
-        Preconditions.checkArgument(this.dimensionSize() == points.length, "Can't compare points with different number of dimensions");
+        Preconditions.checkArgument(this.size() == points.length, "Can't compare points with different number of dimensions.");
         Preconditions.checkNotNull(this.dimensions);
         float sum = 0.0f;
         for (int i = 0; i < points.length; ++i) {
@@ -55,7 +70,7 @@ public class TimeSeriesPoint {
     @Override
     public String toString() {
         String formatted = "(";
-        for (int i = 0; i < this.dimensionSize(); ++i) {
+        for (int i = 0; i < this.size(); ++i) {
             formatted.concat(dimensions[i] + ",");
         }
         return formatted + this.time + ")";

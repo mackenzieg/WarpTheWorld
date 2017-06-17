@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This filter remove a vector if it doesn't differ enough from the previous
+ * This filter removes a vector if it doesn't differ enough from the previous
  * retrieved value
  */
 public class DifferenceEquivalenceFilter extends Filter {
