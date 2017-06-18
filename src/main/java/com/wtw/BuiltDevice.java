@@ -47,14 +47,20 @@ public class BuiltDevice extends EventListener {
         }
     }
 
-    public void startTimeWarp() {
-        this.timeWarpManager.setStarted(true);
-        this.timeWarpManager.start();
+    public BuiltDevice setStartTimeWarp(boolean start) {
+        this.timeWarpManager.setStarted(start);
+        if (start) {
+            this.timeWarpManager.start();
+        }
+        return this;
     }
 
-    public void startCompressing() {
-        this.compressionManager.setStarted(true);
-        this.compressionManager.start();
+    public BuiltDevice setStartCompression(boolean start) {
+        this.compressionManager.setStarted(start);
+        if (start) {
+            this.compressionManager.start();
+        }
+        return this;
     }
 
     public BuiltDevice measuredSeries(TimeSeries timeSeries) {
