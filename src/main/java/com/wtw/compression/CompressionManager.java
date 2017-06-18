@@ -29,7 +29,7 @@ public class CompressionManager extends Thread {
 
     @Override
     public void run() {
-        while (!started) {
+        while (started) {
             if (queuedCompressions.size() == 0) {
                 try {
                     Thread.sleep(5);
@@ -64,6 +64,8 @@ public class CompressionManager extends Thread {
 
     public void addCompressor(TimeSeriesCompressor compressor) {
         Preconditions.checkNotNull(compressor);
-        this.compressors.add(compressor);
+        if (this.isStarted()) {
+            this.compressors.add(compressor);
+        }
     }
 }

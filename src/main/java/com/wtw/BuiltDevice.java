@@ -41,27 +41,25 @@ public class BuiltDevice extends EventListener {
         StartTimeWarpEvent startTimeWarpEvent = new StartTimeWarpEvent();
         this.eventBus.post(startTimeWarpEvent);
         if (!startTimeWarpEvent.isCancelled()) {
-            if (this.timeWarpManager.isStarted()) {
-                for (TimeSeries timeSeries : startTimeWarpEvent.getComparisons()) {
-                    this.timeWarpManager.addTimeWarpComp(postCompressionEvent.getAfter(), timeSeries);
-                }
+            for (TimeSeries timeSeries : startTimeWarpEvent.getComparisons()) {
+                this.timeWarpManager.addTimeWarpComp(postCompressionEvent.getAfter(), timeSeries);
             }
         }
     }
 
     public void startTimeWarp() {
+        this.timeWarpManager.setStarted(true);
         this.timeWarpManager.start();
     }
 
     public void startCompressing() {
+        this.compressionManager.setStarted(true);
         this.compressionManager.start();
     }
 
     public BuiltDevice measuredSeries(TimeSeries timeSeries) {
         this.eventBus.post(new RecordedTimeSeriesEvent(timeSeries));
-        if (this.compressionManager.isStarted()) {
-            this.compressionManager.addSeries(timeSeries);
-        }
+        this.compressionManager.addSeries(timeSeries);
         return this;
     }
 

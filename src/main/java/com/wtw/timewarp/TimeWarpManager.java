@@ -28,15 +28,27 @@ public class TimeWarpManager extends Thread {
     public void addTimeWarpComp(TimeSeries original, TimeSeries compareTo) {
         Preconditions.checkNotNull(original);
         Preconditions.checkNotNull(compareTo);
-        this.queuedSeries.add(original);
-        this.queuedReferenceSeries.add(compareTo);
+        if (this.isStarted()) {
+            this.queuedSeries.add(original);
+            this.queuedReferenceSeries.add(compareTo);
+        }
     }
 
     @Override
     public void run() {
-        TimeSeries recorded = queuedSeries.removeFirst();
-        TimeSeries compareTo = queuedReferenceSeries.removeFirst();
 
+        while (this.started) {
+            if (queuedSeries.size() == 0) {
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            TimeSeries recorded = queuedSeries.removeFirst();
+            TimeSeries compareTo = queuedReferenceSeries.removeFirst();
+        }
 
     }
 
