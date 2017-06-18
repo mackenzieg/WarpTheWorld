@@ -13,9 +13,10 @@ import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+// TODO eventually generalize this
 public class TimeWarpManager extends Thread {
 
-    @Getter
+    @Getter @Setter
     private EventBus eventBus;
 
     private ExecutorService pool = Executors.newCachedThreadPool();
@@ -32,9 +33,8 @@ public class TimeWarpManager extends Thread {
     @Setter
     private DistanceCalculator distanceCalculator;
 
-    public TimeWarpManager(DistanceCalculator distanceCalculator, EventBus eventBus) {
+    public TimeWarpManager(DistanceCalculator distanceCalculator) {
         this.distanceCalculator = distanceCalculator;
-        this.eventBus = eventBus;
     }
 
     public void addTimeWarpComp(TimeSeries original, TimeSeries compareTo) {
@@ -55,6 +55,7 @@ public class TimeWarpManager extends Thread {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                continue;
             }
 
             TimeSeries recorded = queuedSeries.removeFirst();

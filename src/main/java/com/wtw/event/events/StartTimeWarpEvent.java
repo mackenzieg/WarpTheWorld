@@ -15,8 +15,9 @@ public class StartTimeWarpEvent extends Event implements Cancellable {
     @Getter
     private List<TimeSeries> comparisons = new ArrayList<>();
 
-    public void addComparison(TimeSeries timeSeries) {
+    public StartTimeWarpEvent addComparison(TimeSeries timeSeries) {
         this.comparisons.add(timeSeries);
+        return this;
     }
 
     public boolean isCancelled() {

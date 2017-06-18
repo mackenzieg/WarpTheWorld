@@ -24,6 +24,7 @@ public class Device {
     public Device setTimeWarpManager(TimeWarpManager timeWarpManager) {
         Preconditions.checkNotNull(timeWarpManager);
         this.timeWarpManager = timeWarpManager;
+        this.timeWarpManager.setEventBus(this.eventBus);
         return this;
     }
 
@@ -39,6 +40,7 @@ public class Device {
     }
 
     public Device addFilter(Filter filter) {
+        Preconditions.checkNotNull(filter);
         this.filters.add(filter);
         return this;
     }
