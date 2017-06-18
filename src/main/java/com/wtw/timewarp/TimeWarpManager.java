@@ -5,18 +5,19 @@ import com.wtw.distance.DistanceCalculator;
 import com.wtw.event.EventBus;
 import com.wtw.event.events.PostTimeWarpEvent;
 import com.wtw.timeseries.TimeSeries;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 // TODO eventually generalize this
 public class TimeWarpManager extends Thread {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private EventBus eventBus;
 
     private ExecutorService pool = Executors.newCachedThreadPool();
@@ -60,11 +61,16 @@ public class TimeWarpManager extends Thread {
             TimeSeries recorded = queuedSeries.removeFirst();
             TimeSeries compareTo = queuedReferenceSeries.removeFirst();
 
-            pool.submit(new TimeWarpCalculator(recorded, compareTo));
+            try {
+                pool.submit(new TimeWarpCalculator(recorded, compareTo)).get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    @AllArgsConstructor
     public class TimeWarpCalculator implements Runnable {
 
         @Getter
@@ -72,12 +78,101 @@ public class TimeWarpManager extends Thread {
         @Getter
         private TimeSeries compareTo;
 
+        public TimeWarpCalculator(TimeSeries recorded, TimeSeries compareTo) {
+            Preconditions.checkNotNull(recorded);
+            Preconditions.checkNotNull(compareTo);
+            this.recorded = recorded;
+            this.compareTo = compareTo;
+        }
+
+        private float[][][] matrix;
+        private float[][][] distance;
+        private float sum[];
+
         @Override
         public void run() {
-            // TODO calculate it and post an event
-            PostTimeWarpEvent postTimeWarpEvent = new PostTimeWarpEvent(recorded, compareTo, 10);
+
+            // TODO this is DTW not FastDTW just to do some testing
+            // TODO this is very bad bad bad
+
+            this.matrix = new float[recorded.getPoint(0).size()][recorded.size() + 1][compareTo.size() + 1];
+            this.distance = new float[recorded.getPoint(0).size()][recorded.size()][compareTo.size()];
+
+            int numDimensions = recorded.getPoint(0).size();
+
+
+            for (int i = 0; i < numDimensions; ++i) {
+                for (int x = 0; x <= recorded.size(); ++x) {
+                    for (int y = 0; y <= compareTo.size(); ++y) {
+                        this.matrix[i][x][y] = -1.0f;
+                    }
+                }
+            }
+            for (int i = 0; i < numDimensions; ++i) {
+                for (int x = 0; x < recorded.size(); ++x) {
+                    for (int y = 0; y < compareTo.size(); ++y) {
+                        this.distance[i][x][y] = distanceCalculator.distance(recorded.getPoint(x).getDimension(i), compareTo.getPoint(x).getDimension(i));
+                    }
+                }
+            }
+            for (int i = 0; i < numDimensions; ++i) {
+                for (int x = 1; x < recorded.size(); ++x) {
+                    matrix[i][x][0] = Float.POSITIVE_INFINITY;
+                }
+            }
+
+            for (int i = 0; i < numDimensions; ++i) {
+                for (int x = 1; x < compareTo.size(); ++x) {
+                    matrix[i][0][x] = Float.POSITIVE_INFINITY;
+                }
+            }
+
+            for (int i = 0; i < numDimensions; ++i) {
+                matrix[i][0][0] = 0.0f;
+            }
+
+            sum = new float[numDimensions];
+
+            for (int i = 0; i < numDimensions; ++i) {
+                sum[i] = computeBackward(i, recorded.size() - 1, compareTo.size() - 1);
+            }
+
+            float singleSum = 0.0f;
+
+            for (int i = 0; i < numDimensions; ++i) {
+                singleSum += sum[i];
+            }
+
+            PostTimeWarpEvent postTimeWarpEvent = new PostTimeWarpEvent(recorded, compareTo, singleSum);
             eventBus.post(postTimeWarpEvent);
         }
-    }
 
+        public float computeBackward(int dimension, int i, int j) {
+            // If greater than window return distance
+            if (!(matrix[dimension][i][j] < 0.0f)) {
+                return matrix[dimension][i][j];
+            }
+
+            // Compute path in insertion manner
+            if (computeBackward(dimension, i - 1, j) <= computeBackward(dimension, i, j - 1) &&
+                    computeBackward(dimension, i - 1, j) <= computeBackward(dimension, i - 1, j - 1) &&
+                    computeBackward(dimension, i - 1, j) < Float.POSITIVE_INFINITY) {
+
+                matrix[dimension][i][j] = distance[dimension][i - 1][j - 1] + computeBackward(dimension, i - 1, j);
+                // Compute path in deletion manner
+            } else if (computeBackward(dimension, i, j - 1) <= computeBackward(dimension, i - 1, j) &&
+                    computeBackward(dimension, i, j - 1) <= computeBackward(dimension, i - 1, j - 1) &&
+                    computeBackward(dimension, i, j - 1) < Float.POSITIVE_INFINITY) {
+
+                matrix[dimension][i][j] = distance[dimension][i - 1][j - 1] + computeBackward(dimension, i, j - 1);
+                // Compute path in match manner
+            } else if (computeBackward(dimension, i - 1, j - 1) <= computeBackward(dimension, i - 1, j) &&
+                    computeBackward(dimension, i - 1, j - 1) <= computeBackward(dimension, i, j - 1) &&
+                    computeBackward(dimension, i - 1, j - 1) < Float.POSITIVE_INFINITY) {
+
+                matrix[dimension][i][j] = distance[dimension][i - 1][j - 1] + computeBackward(dimension, i - 1, j - 1);
+            }
+            return matrix[dimension][i][j];
+        }
+    }
 }

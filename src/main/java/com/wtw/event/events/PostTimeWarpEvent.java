@@ -14,6 +14,6 @@ public class PostTimeWarpEvent {
     private final TimeSeries reference;
 
     @Getter
-    private final int distance;
+    private final float distance;
 
 }

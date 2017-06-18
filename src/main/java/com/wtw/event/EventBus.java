@@ -11,7 +11,7 @@ public class EventBus {
 
     private final Map<Class<?>, List<EventHandlerMethod>> listeners = new HashMap<Class<?>, List<EventHandlerMethod>>();
 
-    public void post(Object event) {
+    public synchronized void post(Object event) {
         List<EventHandlerMethod> handlers = listeners.get(event.getClass());
 
         if (handlers == null) {
@@ -28,7 +28,7 @@ public class EventBus {
     }
 
     // TODO eventually check that class extends EventListener and have priority
-    public void register(Object listener) {
+    public synchronized void register(Object listener) {
         for (Method method : listener.getClass().getDeclaredMethods()) {
             EventHandler annotation = method.getAnnotation(EventHandler.class);
             if (annotation != null) {

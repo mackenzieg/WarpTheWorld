@@ -15,6 +15,7 @@ import com.wtw.timewarp.TimeWarpManager;
 
 import java.util.EventListener;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Main {
 
@@ -28,6 +29,17 @@ public class Main {
                     random.nextFloat()}, i));
         }
 
+        TimeSeries timeSeries = new TimeSeries();
+
+        for (int i = 0; i < 11; ++i) {
+            timeSeries.addPoint(new TimeSeriesPoint(new float[]{
+                    random.nextFloat()}, i));
+        }
+
+        AtomicReference<TimeSeries> cache = new AtomicReference<>();
+
+        cache.set(timeSeries);
+
         BuiltDevice builtDevice = new Device()
                 .addCompressor(new MeanCompressor(5))
                 .addFilter(new LowPassFilter(1))
@@ -38,6 +50,7 @@ public class Main {
                     @EventHandler
                     public void getCompressed(PostCompressionEvent postCompressionEvent) {
                         System.out.println("After");
+                        cache.set(postCompressionEvent.getAfter());
                         System.out.println(postCompressionEvent.getAfter().toString());
                     }
 
@@ -48,16 +61,10 @@ public class Main {
 
                     @EventHandler
                     public void compare(StartTimeWarpEvent startTimeWarpEvent) {
-                        startTimeWarpEvent.addComparison(compare);
+                        startTimeWarpEvent.addComparison(compare)
+                            .addComparison(cache.get());
                     }
                 }).build().setStartCompression(true).setStartTimeWarp(true);
-
-        TimeSeries timeSeries = new TimeSeries();
-
-        for (int i = 0; i < 11; ++i) {
-            timeSeries.addPoint(new TimeSeriesPoint(new float[]{
-                    random.nextFloat()}, i));
-        }
 
         System.out.println("Before");
         System.out.println(timeSeries.toString());
