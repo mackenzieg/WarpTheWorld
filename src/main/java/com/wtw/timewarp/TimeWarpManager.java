@@ -40,10 +40,9 @@ public class TimeWarpManager extends Thread {
     public void addTimeWarpComp(TimeSeries original, TimeSeries compareTo) {
         Preconditions.checkNotNull(original);
         Preconditions.checkNotNull(compareTo);
-        if (this.isStarted()) {
-            this.queuedSeries.add(original);
-            this.queuedReferenceSeries.add(compareTo);
-        }
+        Preconditions.checkArgument(this.isStarted(), "Must start thread before adding comparisons.");
+        this.queuedSeries.add(original);
+        this.queuedReferenceSeries.add(compareTo);
     }
 
     @Override

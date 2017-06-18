@@ -47,7 +47,6 @@ public class CompressionManager extends Thread {
             TimeSeries before = new TimeSeries(after);
 
             if (!startCompressionEvent.isCancelled()) {
-                System.out.println();
                 for (TimeSeriesCompressor timeSeriesCompressor : compressors) {
                     after = timeSeriesCompressor.compress(after);
                 }
@@ -64,8 +63,6 @@ public class CompressionManager extends Thread {
 
     public void addCompressor(TimeSeriesCompressor compressor) {
         Preconditions.checkNotNull(compressor);
-        if (this.isStarted()) {
-            this.compressors.add(compressor);
-        }
+        this.compressors.add(compressor);
     }
 }
