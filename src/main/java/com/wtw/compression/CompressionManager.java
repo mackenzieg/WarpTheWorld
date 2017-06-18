@@ -21,7 +21,7 @@ public class CompressionManager extends Thread {
 
     @Getter
     @Setter
-    private boolean complete = false;
+    private boolean started = false;
 
     public CompressionManager(EventBus eventBus) {
         this.eventBus = eventBus;
@@ -29,7 +29,7 @@ public class CompressionManager extends Thread {
 
     @Override
     public void run() {
-        while (!complete) {
+        while (!started) {
             if (queuedCompressions.size() == 0) {
                 try {
                     Thread.sleep(5);

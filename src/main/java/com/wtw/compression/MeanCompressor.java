@@ -2,7 +2,6 @@ package com.wtw.compression;
 
 import com.google.common.base.Preconditions;
 import com.wtw.timeseries.TimeSeries;
-import com.wtw.timeseries.TimeSeriesPoint;
 
 public class MeanCompressor extends TimeSeriesCompressor {
 
@@ -34,5 +33,4 @@ public class MeanCompressor extends TimeSeriesCompressor {
 
         return compressedSeries;
     }
-
 }

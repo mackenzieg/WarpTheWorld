@@ -6,12 +6,10 @@ import com.wtw.detectors.GestureDetector;
 import com.wtw.event.EventBus;
 import com.wtw.event.EventHandler;
 import com.wtw.event.EventListener;
-import com.wtw.event.events.PostCompressionEvent;
-import com.wtw.event.events.PostFilterEvent;
-import com.wtw.event.events.RecordedTimeSeriesEvent;
-import com.wtw.event.events.StartFilteringEvent;
+import com.wtw.event.events.*;
 import com.wtw.filters.Filter;
 import com.wtw.timeseries.TimeSeries;
+import com.wtw.timewarp.TimeWarpManager;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -24,26 +22,46 @@ public class BuiltDevice extends EventListener {
     private GestureDetector gestureDetector = null;
     @Getter
     private CompressionManager compressionManager;
+    @Getter
+    private TimeWarpManager timeWarpManager;
 
-    public BuiltDevice(EventBus eventBus, ArrayList<Filter> filters, GestureDetector gestureDetector, CompressionManager compressionManager) {
+    public BuiltDevice(EventBus eventBus, ArrayList<Filter> filters, GestureDetector gestureDetector, CompressionManager compressionManager, TimeWarpManager timeWarpManager) {
         Preconditions.checkNotNull(gestureDetector, "Must define a gesture detector.");
         this.filters = filters;
         this.gestureDetector = gestureDetector;
         this.eventBus = eventBus;
         this.compressionManager = compressionManager;
+        this.timeWarpManager = timeWarpManager;
         this.eventBus.register(this);
         this.gestureDetector.setDevice(this);
-        this.compressionManager.start();
     }
 
     @EventHandler
     public void postCompression(PostCompressionEvent postCompressionEvent) {
+        StartTimeWarpEvent startTimeWarpEvent = new StartTimeWarpEvent();
+        this.eventBus.post(startTimeWarpEvent);
+        if (!startTimeWarpEvent.isCancelled()) {
+            if (this.timeWarpManager.isStarted()) {
+                for (TimeSeries timeSeries : startTimeWarpEvent.getComparisons()) {
+                    this.timeWarpManager.addTimeWarpComp(postCompressionEvent.getAfter(), timeSeries);
+                }
+            }
+        }
+    }
 
+    public void startTimeWarp() {
+        this.timeWarpManager.start();
+    }
+
+    public void startCompressing() {
+        this.compressionManager.start();
     }
 
     public BuiltDevice measuredSeries(TimeSeries timeSeries) {
         this.eventBus.post(new RecordedTimeSeriesEvent(timeSeries));
-        this.compressionManager.addSeries(timeSeries);
+        if (this.compressionManager.isStarted()) {
+            this.compressionManager.addSeries(timeSeries);
+        }
         return this;
     }
 

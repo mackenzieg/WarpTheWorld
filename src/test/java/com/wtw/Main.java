@@ -27,8 +27,7 @@ public class Main {
                         System.out.println("After");
                         System.out.println(postCompressionEvent.getAfter().toString());
                     }
-                })
-                .build();
+                }).build();
 
         TimeSeries timeSeries = new TimeSeries();
 
