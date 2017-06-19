@@ -13,7 +13,6 @@ import com.wtw.filters.LowPassFilter;
 import com.wtw.timeseries.TimeSeries;
 import com.wtw.timeseries.TimeSeriesPoint;
 import com.wtw.timewarp.SlowTimeWarpCalculator;
-import com.wtw.timewarp.TimeWarpManager;
 
 import java.util.EventListener;
 import java.util.Random;
