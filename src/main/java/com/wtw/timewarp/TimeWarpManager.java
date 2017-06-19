@@ -56,15 +56,18 @@ public class TimeWarpManager extends Thread {
                 continue;
             }
 
-            TimeSeries recorded = queuedSeries.removeFirst();
-            TimeSeries compareTo = queuedReferenceSeries.removeFirst();
+            final TimeSeries recorded = queuedSeries.removeFirst();
+            final TimeSeries compareTo = queuedReferenceSeries.removeFirst();
 
-            for (TimeSeriesDistanceCalculator timeSeriesDistanceCalculator : timeSeriesDistanceCalculators) {
-                pool.submit(() -> {
-                    float distance = timeSeriesDistanceCalculator.distance(recorded, compareTo);
+            for (final TimeSeriesDistanceCalculator timeSeriesDistanceCalculator : timeSeriesDistanceCalculators) {
+                pool.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        float distance = timeSeriesDistanceCalculator.distance(recorded, compareTo);
 
-                    PostTimeWarpEvent postTimeWarpEvent = new PostTimeWarpEvent(recorded, compareTo, distance);
-                    eventBus.post(postTimeWarpEvent);
+                        PostTimeWarpEvent postTimeWarpEvent = new PostTimeWarpEvent(recorded, compareTo, distance);
+                        eventBus.post(postTimeWarpEvent);
+                    }
                 });
             }
         }

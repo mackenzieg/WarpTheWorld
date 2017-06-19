@@ -23,22 +23,22 @@ public class FullSystemTest {
 
     public static void main(String[] args) {
 
-        TimeSeries compare = new TimeSeries();
+        final TimeSeries compare = new TimeSeries();
 
         Random random = new Random();
-        for (int i = 0; i < 11; ++i) {
+        for (int i = 0; i < 1000; ++i) {
             compare.addPoint(new TimeSeriesPoint(new float[]{
                     random.nextFloat()}, i));
         }
 
         TimeSeries timeSeries = new TimeSeries();
 
-        for (int i = 0; i < 11; ++i) {
+        for (int i = 0; i < 200; ++i) {
             timeSeries.addPoint(new TimeSeriesPoint(new float[]{
                     random.nextFloat()}, i));
         }
 
-        AtomicReference<TimeSeries> cache = new AtomicReference<>();
+        final AtomicReference<TimeSeries> cache = new AtomicReference<>();
 
         cache.set(timeSeries);
 
@@ -63,8 +63,7 @@ public class FullSystemTest {
 
                     @EventHandler
                     public void compare(StartTimeWarpEvent startTimeWarpEvent) {
-                        startTimeWarpEvent.addComparison(compare)
-                            .addComparison(compare);
+                        startTimeWarpEvent.addComparison(compare);
                     }
                 }).build().setStartCompression(true).setStartTimeWarp(true);
 
