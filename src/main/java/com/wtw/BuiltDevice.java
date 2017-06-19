@@ -17,13 +17,13 @@ import java.util.ArrayList;
 public class BuiltDevice extends EventListener {
     @Getter
     private final EventBus eventBus;
-    private ArrayList<Filter> filters = new ArrayList<>();
+    private final ArrayList<Filter> filters;
     @Getter
-    private GestureDetector gestureDetector = null;
+    private final GestureDetector gestureDetector;
     @Getter
-    private CompressionManager compressionManager;
+    private final CompressionManager compressionManager;
     @Getter
-    private TimeWarpManager timeWarpManager;
+    private final TimeWarpManager timeWarpManager;
 
     public BuiltDevice(EventBus eventBus, ArrayList<Filter> filters, GestureDetector gestureDetector, CompressionManager compressionManager, TimeWarpManager timeWarpManager) {
         Preconditions.checkNotNull(gestureDetector, "Must define a gesture detector.");
@@ -34,6 +34,7 @@ public class BuiltDevice extends EventListener {
         this.timeWarpManager = timeWarpManager;
         this.eventBus.register(this);
         this.gestureDetector.setDevice(this);
+        this.timeWarpManager.setEventBus(this.eventBus);
     }
 
     @EventHandler

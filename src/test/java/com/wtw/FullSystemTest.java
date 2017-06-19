@@ -2,6 +2,7 @@ package com.wtw;
 
 import com.wtw.compression.MeanCompressor;
 import com.wtw.detectors.DefaultGestureDetector;
+import com.wtw.distance.AbsoluteDistance;
 import com.wtw.distance.EuclideanDistance;
 import com.wtw.event.EventHandler;
 import com.wtw.event.events.PostCompressionEvent;
@@ -11,13 +12,14 @@ import com.wtw.filters.DifferenceEquivalenceFilter;
 import com.wtw.filters.LowPassFilter;
 import com.wtw.timeseries.TimeSeries;
 import com.wtw.timeseries.TimeSeriesPoint;
+import com.wtw.timewarp.SlowTimeWarpCalculator;
 import com.wtw.timewarp.TimeWarpManager;
 
 import java.util.EventListener;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Main {
+public class FullSystemTest {
 
     public static void main(String[] args) {
 
@@ -45,7 +47,7 @@ public class Main {
                 .addFilter(new LowPassFilter(1))
                 .addFilter(new DifferenceEquivalenceFilter(3))
                 .setGestureDetector(new DefaultGestureDetector(new EuclideanDistance()))
-                .setTimeWarpManager(new TimeWarpManager(new EuclideanDistance()))
+                .addTimeWarpCalculator(new SlowTimeWarpCalculator(new AbsoluteDistance()))
                 .registerListener(new EventListener() {
                     @EventHandler
                     public void getCompressed(PostCompressionEvent postCompressionEvent) {
@@ -62,7 +64,7 @@ public class Main {
                     @EventHandler
                     public void compare(StartTimeWarpEvent startTimeWarpEvent) {
                         startTimeWarpEvent.addComparison(compare)
-                            .addComparison(cache.get());
+                            .addComparison(compare);
                     }
                 }).build().setStartCompression(true).setStartTimeWarp(true);
 

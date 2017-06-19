@@ -6,6 +6,7 @@ import com.wtw.compression.TimeSeriesCompressor;
 import com.wtw.detectors.GestureDetector;
 import com.wtw.event.EventBus;
 import com.wtw.filters.Filter;
+import com.wtw.timewarp.TimeSeriesDistanceCalculator;
 import com.wtw.timewarp.TimeWarpManager;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class Device {
     private ArrayList<Filter> filters = new ArrayList<>();
     private GestureDetector gestureDetector = null;
     private CompressionManager compressionManager = new CompressionManager(eventBus);
-    private TimeWarpManager timeWarpManager;
+    private TimeWarpManager timeWarpManager = new TimeWarpManager();
 
     public Device() {
     }
@@ -28,6 +29,12 @@ public class Device {
         return this;
     }
 
+    public Device addTimeWarpCalculator(TimeSeriesDistanceCalculator timeSeriesDistanceCalculator) {
+        Preconditions.checkNotNull(timeSeriesDistanceCalculator);
+        this.timeWarpManager.addDistanceCalculator(timeSeriesDistanceCalculator);
+        return this;
+    }
+
     public Device setGestureDetector(GestureDetector gestureDetector) {
         Preconditions.checkNotNull(gestureDetector);
         this.gestureDetector = gestureDetector;
@@ -35,6 +42,7 @@ public class Device {
     }
 
     public Device registerListener(Object listener) {
+        Preconditions.checkNotNull(listener);
         this.eventBus.register(listener);
         return this;
     }
@@ -46,6 +54,7 @@ public class Device {
     }
 
     public Device addCompressor(TimeSeriesCompressor compressor) {
+        Preconditions.checkNotNull(compressor);
         this.compressionManager.addCompressor(compressor);
         return this;
     }
