@@ -10,5 +10,4 @@ public class RecordedTimeSeriesEvent extends Event {
 
     @Getter
     private TimeSeries timeSeries;
-
 }

@@ -41,7 +41,9 @@ public class EventBus {
 
                 Class<?> eventType = params[0];
 
-                this.listeners.putIfAbsent(eventType, new ArrayList<EventHandlerMethod>());
+                if (this.listeners.get(eventType) == null) {
+                    this.listeners.put(eventType, new ArrayList<EventHandlerMethod>());
+                }
 
                 method.setAccessible(true);
 

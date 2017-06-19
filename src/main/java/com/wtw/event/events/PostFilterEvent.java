@@ -12,5 +12,4 @@ public class PostFilterEvent extends Event {
 
     @Getter
     private final float[] after;
-
 }

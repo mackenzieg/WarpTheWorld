@@ -12,5 +12,4 @@ public class PostCompressionEvent {
 
     @Getter
     private final TimeSeries after;
-
 }

@@ -15,5 +15,4 @@ public class PostTimeWarpEvent {
 
     @Getter
     private final float distance;
-
 }

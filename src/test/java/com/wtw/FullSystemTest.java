@@ -43,7 +43,7 @@ public class FullSystemTest {
 
         BuiltDevice builtDevice = new Device()
                 .addCompressor(new MeanCompressor(5))
-                .addFilter(new LowPassFilter(1))
+                .addFilter(new LowPassFilter(3))
                 .addFilter(new DifferenceEquivalenceFilter(3))
                 .setGestureDetector(new DefaultGestureDetector(new EuclideanDistance()))
                 .addTimeWarpCalculator(new SlowTimeWarpCalculator(new AbsoluteDistance()))
