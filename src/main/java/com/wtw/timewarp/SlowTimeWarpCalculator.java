@@ -18,18 +18,17 @@ public class SlowTimeWarpCalculator extends TimeSeriesDistanceCalculator {
 
         int numDimensions = recorded.getPoint(0).size();
 
-
-        for (int i = 0; i < numDimensions; ++i) {
+        for (int d = 0; d < numDimensions; ++d) {
             for (int x = 0; x <= recorded.size(); ++x) {
                 for (int y = 0; y <= reference.size(); ++y) {
-                    this.matrix[i][x][y] = -1.0f;
+                    this.matrix[d][x][y] = -1.0f;
                 }
             }
         }
-        for (int i = 0; i < numDimensions; ++i) {
+        for (int d = 0; d < numDimensions; ++d) {
             for (int x = 0; x < recorded.size(); ++x) {
                 for (int y = 0; y < reference.size(); ++y) {
-                    this.distance[i][x][y] = this.getDistanceCalculator().distance(recorded.getPoint(x).getDimension(i), reference.getPoint(x).getDimension(i));
+                    this.distance[d][x][y] = this.getDistanceCalculator().distance(recorded.getPoint(x).getDimension(d), reference.getPoint(x).getDimension(d));
                 }
             }
         }

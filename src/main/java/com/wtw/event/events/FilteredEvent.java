@@ -16,5 +16,4 @@ public class FilteredEvent extends Event {
 
     @Getter
     private float[] after;
-
 }
