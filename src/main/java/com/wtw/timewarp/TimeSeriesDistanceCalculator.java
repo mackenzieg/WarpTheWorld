@@ -1,7 +1,7 @@
 package com.wtw.timewarp;
 
 import com.wtw.distance.DistanceCalculator;
-import com.wtw.timeseries.TimeSeries;
+import com.wtw.timeseries.TimeSeriesComparison;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +13,6 @@ public abstract class TimeSeriesDistanceCalculator {
     @Setter
     private DistanceCalculator distanceCalculator;
 
-    public abstract float distance(TimeSeries recorded, TimeSeries reference);
+    public abstract void distance(TimeSeriesComparison timeSeriesComparison);
 
 }

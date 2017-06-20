@@ -3,25 +3,30 @@ package com.wtw.event.events;
 import com.wtw.event.Cancellable;
 import com.wtw.event.Event;
 import com.wtw.timeseries.TimeSeries;
+import com.wtw.timeseries.TimeSeriesComparison;
+import com.wtw.timewarp.TimeWarpComparisonResults;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class StartTimeWarpEvent extends Event implements Cancellable {
 
-    private boolean cancelled = false;
+    @Getter
+    private TimeWarpComparisonResults comparisons = new TimeWarpComparisonResults();
 
     @Getter
-    private List<TimeSeries> comparisons = new ArrayList<>();
+    private TimeSeries recorded;
 
-    public StartTimeWarpEvent addComparison(TimeSeries timeSeries) {
-        this.comparisons.add(timeSeries);
-        return this;
+    private boolean cancelled = false;
+
+    public StartTimeWarpEvent(TimeSeries recorded) {
+        this.recorded = recorded;
     }
 
     public boolean isCancelled() {
         return this.cancelled;
+    }
+
+    public void addComparison(TimeSeries reference) {
+        this.comparisons.addComparison(new TimeSeriesComparison(recorded, reference));
     }
 
     public void setCancelled(boolean cancelled) {

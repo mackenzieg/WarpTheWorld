@@ -46,7 +46,7 @@ public class FullSystemTest {
                 .addFilter(new LowPassFilter(3))
                 .addFilter(new DifferenceEquivalenceFilter(3))
                 .setGestureDetector(new DefaultGestureDetector(new EuclideanDistance()))
-                .addTimeWarpCalculator(new SlowTimeWarpCalculator(new AbsoluteDistance()))
+                .setTimeWarpCalculator(new SlowTimeWarpCalculator(new AbsoluteDistance()))
                 .registerListener(new EventListener() {
                     @EventHandler
                     public void getCompressed(PostCompressionEvent postCompressionEvent) {
@@ -57,7 +57,7 @@ public class FullSystemTest {
 
                     @EventHandler
                     public void postTimeWarp(PostTimeWarpEvent postTimeWarpEvent) {
-                        System.out.println(postTimeWarpEvent.getDistance());
+                        System.out.println(postTimeWarpEvent.getTimeWarpComparisonResults().getResults().toArray().toString());
                     }
 
                     @EventHandler

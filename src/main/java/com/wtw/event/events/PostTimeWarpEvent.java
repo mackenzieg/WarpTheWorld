@@ -1,18 +1,16 @@
 package com.wtw.event.events;
 
-import com.wtw.timeseries.TimeSeries;
+import com.wtw.event.Event;
+import com.wtw.timewarp.TimeWarpComparisonResults;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @AllArgsConstructor
-public class PostTimeWarpEvent {
+public class PostTimeWarpEvent extends Event {
 
     @Getter
-    private final TimeSeries recorded;
-
-    @Getter
-    private final TimeSeries reference;
-
-    @Getter
-    private final float distance;
+    private final TimeWarpComparisonResults timeWarpComparisonResults;
 }

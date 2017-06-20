@@ -9,6 +9,8 @@ import com.wtw.event.EventListener;
 import com.wtw.event.events.*;
 import com.wtw.filters.Filter;
 import com.wtw.timeseries.TimeSeries;
+import com.wtw.timeseries.TimeSeriesComparison;
+import com.wtw.timewarp.TimeWarpComparisonResults;
 import com.wtw.timewarp.TimeWarpManager;
 import lombok.Getter;
 
@@ -39,12 +41,14 @@ public class BuiltDevice extends EventListener {
 
     @EventHandler
     public void postCompression(PostCompressionEvent postCompressionEvent) {
-        StartTimeWarpEvent startTimeWarpEvent = new StartTimeWarpEvent();
+        StartTimeWarpEvent startTimeWarpEvent = new StartTimeWarpEvent(postCompressionEvent.getAfter());
         this.eventBus.post(startTimeWarpEvent);
         if (!startTimeWarpEvent.isCancelled()) {
-            for (TimeSeries timeSeries : startTimeWarpEvent.getComparisons()) {
-                this.timeWarpManager.addTimeWarpComp(postCompressionEvent.getAfter(), timeSeries);
+            TimeWarpComparisonResults timeWarpComparisonResults = new TimeWarpComparisonResults();
+            for (TimeSeriesComparison timeSeries : startTimeWarpEvent.getComparisons().getResults()) {
+                timeWarpComparisonResults.addComparison(timeSeries);
             }
+            this.timeWarpManager.addTimeWarpComp(timeWarpComparisonResults);
         }
     }
 
@@ -69,12 +73,10 @@ public class BuiltDevice extends EventListener {
     public BuiltDevice measuredSeries(TimeSeries timeSeries) {
         this.eventBus.post(new RecordedTimeSeriesEvent(timeSeries));
         if (this.compressionManager == null) {
-            StartTimeWarpEvent startTimeWarpEvent = new StartTimeWarpEvent();
+            StartTimeWarpEvent startTimeWarpEvent = new StartTimeWarpEvent(timeSeries);
             this.eventBus.post(startTimeWarpEvent);
             if (!startTimeWarpEvent.isCancelled()) {
-                for (TimeSeries comp : startTimeWarpEvent.getComparisons()) {
-                    this.timeWarpManager.addTimeWarpComp(timeSeries, comp);
-                }
+                this.timeWarpManager.addTimeWarpComp(startTimeWarpEvent.getComparisons());
             }
             return this;
         }

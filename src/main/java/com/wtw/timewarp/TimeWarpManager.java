@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.wtw.event.EventBus;
 import com.wtw.event.events.PostTimeWarpEvent;
 import com.wtw.timeseries.TimeSeries;
+import com.wtw.timeseries.TimeSeriesComparison;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,33 +22,28 @@ public class TimeWarpManager extends Thread {
 
     private ExecutorService pool = Executors.newCachedThreadPool();
 
-    // TODO break into separate object
-    private LinkedList<TimeSeries> queuedSeries = new LinkedList<>();
-    private LinkedList<TimeSeries> queuedReferenceSeries = new LinkedList<>();
-
     @Getter
     @Setter
     private boolean started = false;
 
-    private ArrayList<TimeSeriesDistanceCalculator> timeSeriesDistanceCalculators = new ArrayList<>();
+    private TimeSeriesDistanceCalculator timeSeriesDistanceCalculator = null;
 
-    public void addTimeWarpComp(TimeSeries original, TimeSeries compareTo) {
-        Preconditions.checkNotNull(original);
-        Preconditions.checkNotNull(compareTo);
-        Preconditions.checkArgument(this.isStarted(), "Must start thread before adding comparisons.");
-        this.queuedSeries.add(original);
-        this.queuedReferenceSeries.add(compareTo);
+    private LinkedList<TimeWarpComparisonResults> queued = new LinkedList<>();
+
+    public void addTimeWarpComp(TimeWarpComparisonResults timeWarpComparisons) {
+        Preconditions.checkNotNull(timeWarpComparisons);
+        queued.add(timeWarpComparisons);
     }
 
-    public void addDistanceCalculator(TimeSeriesDistanceCalculator timeSeriesDistanceCalculator) {
+    public void setDistanceCalculator(TimeSeriesDistanceCalculator timeSeriesDistanceCalculator) {
         Preconditions.checkNotNull(timeSeriesDistanceCalculator);
-        this.timeSeriesDistanceCalculators.add(timeSeriesDistanceCalculator);
+        this.timeSeriesDistanceCalculator = timeSeriesDistanceCalculator;
     }
 
     @Override
     public void run() {
         while (this.started) {
-            if (queuedSeries.size() == 0) {
+            if (queued.size() == 0) {
                 try {
                     Thread.sleep(5);
                 } catch (InterruptedException e) {
@@ -56,17 +52,19 @@ public class TimeWarpManager extends Thread {
                 continue;
             }
 
-            final TimeSeries recorded = queuedSeries.removeFirst();
-            final TimeSeries compareTo = queuedReferenceSeries.removeFirst();
+            Preconditions.checkNotNull(timeSeriesDistanceCalculator);
 
-            for (final TimeSeriesDistanceCalculator timeSeriesDistanceCalculator : timeSeriesDistanceCalculators) {
+            final TimeWarpComparisonResults timeWarpComparisonResults = queued.removeFirst();
+
+            for (final TimeSeriesComparison timeSeriesComparison : timeWarpComparisonResults.getResults()) {
                 pool.submit(new Runnable() {
                     @Override
                     public void run() {
-                        float distance = timeSeriesDistanceCalculator.distance(recorded, compareTo);
-
-                        PostTimeWarpEvent postTimeWarpEvent = new PostTimeWarpEvent(recorded, compareTo, distance);
-                        eventBus.post(postTimeWarpEvent);
+                        timeSeriesDistanceCalculator.distance(timeSeriesComparison);
+                        if (timeWarpComparisonResults.isComplete()) {
+                            PostTimeWarpEvent postTimeWarpEvent = new PostTimeWarpEvent(timeWarpComparisonResults);
+                            eventBus.post(postTimeWarpEvent);
+                        }
                     }
                 });
             }
