@@ -49,6 +49,7 @@ public class BuiltDevice extends EventListener {
     }
 
     public BuiltDevice setStartTimeWarp(boolean start) {
+        Preconditions.checkNotNull(this.timeWarpManager);
         this.timeWarpManager.setStarted(start);
         if (start) {
             this.timeWarpManager.start();
@@ -57,6 +58,7 @@ public class BuiltDevice extends EventListener {
     }
 
     public BuiltDevice setStartCompression(boolean start) {
+        Preconditions.checkNotNull(this.compressionManager);
         this.compressionManager.setStarted(start);
         if (start) {
             this.compressionManager.start();
@@ -66,6 +68,16 @@ public class BuiltDevice extends EventListener {
 
     public BuiltDevice measuredSeries(TimeSeries timeSeries) {
         this.eventBus.post(new RecordedTimeSeriesEvent(timeSeries));
+        if (this.compressionManager == null) {
+            StartTimeWarpEvent startTimeWarpEvent = new StartTimeWarpEvent();
+            this.eventBus.post(startTimeWarpEvent);
+            if (!startTimeWarpEvent.isCancelled()) {
+                for (TimeSeries comp : startTimeWarpEvent.getComparisons()) {
+                    this.timeWarpManager.addTimeWarpComp(timeSeries, comp);
+                }
+            }
+            return this;
+        }
         this.compressionManager.addSeries(timeSeries);
         return this;
     }

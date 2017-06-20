@@ -16,7 +16,7 @@ public class Device {
     private final EventBus eventBus = new EventBus();
     private ArrayList<Filter> filters = new ArrayList<>();
     private GestureDetector gestureDetector = null;
-    private CompressionManager compressionManager = new CompressionManager(eventBus);
+    private CompressionManager compressionManager = null;
     private TimeWarpManager timeWarpManager = new TimeWarpManager();
 
     public Device() {
@@ -55,6 +55,9 @@ public class Device {
 
     public Device addCompressor(TimeSeriesCompressor compressor) {
         Preconditions.checkNotNull(compressor);
+        if (this.compressionManager == null) {
+            this.compressionManager = new CompressionManager(this.eventBus);
+        }
         this.compressionManager.addCompressor(compressor);
         return this;
     }
