@@ -29,9 +29,9 @@ public class Device {
         return this;
     }
 
-    public Device addTimeWarpCalculator(TimeSeriesDistanceCalculator timeSeriesDistanceCalculator) {
+    public Device setTimeWarpCalculator(TimeSeriesDistanceCalculator timeSeriesDistanceCalculator) {
         Preconditions.checkNotNull(timeSeriesDistanceCalculator);
-        this.timeWarpManager.addDistanceCalculator(timeSeriesDistanceCalculator);
+        this.timeWarpManager.setDistanceCalculator(timeSeriesDistanceCalculator);
         return this;
     }
 
