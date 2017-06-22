@@ -15,15 +15,15 @@ public class LowPassFilter extends Filter {
 
     private int count = 0;
 
+    public LowPassFilter(int dimensions, double TIME_CONSTANT, int COUNT_BEFORE_UPDATE) {
+        this(dimensions);
+        this.TIME_CONSTANT = TIME_CONSTANT;
+        this.COUNT_BEFORE_UPDATE = COUNT_BEFORE_UPDATE;
+    }
+
     public LowPassFilter(int dimensions) {
         super(dimensions);
         this.reset();
-    }
-
-    public LowPassFilter(int dimensions, double TIME_CONSTANT, int COUNT_BEFORE_UPDATE) {
-        super(dimensions);
-        this.TIME_CONSTANT = TIME_CONSTANT;
-        this.COUNT_BEFORE_UPDATE = COUNT_BEFORE_UPDATE;
     }
 
     @Override
