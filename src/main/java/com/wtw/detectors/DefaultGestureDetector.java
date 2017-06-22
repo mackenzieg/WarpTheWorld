@@ -28,28 +28,29 @@ public class DefaultGestureDetector extends GestureDetector {
 
     @Override
     public void newMeasurement(float[] values, long time) {
-
-        float distance = this.getDistanceCalculator().distance(values, previous);
-        if (triggered) {
-            if (lastTimeBelowThreshold >= TIME_THRESHOLD) {
-                this.getDevice().measuredSeries(this.timeSeries);
-                this.timeSeries = new TimeSeries();
-                triggered = false;
-            } else {
-                this.timeSeries.addPoint(new TimeSeriesPoint(values, time));
-            }
-        } else {
-            if (previous != null) {
-                if (distance >= SLOPE_THRESHOLD) {
-                    this.timeSeries.addPoint(new TimeSeriesPoint(values, time));
+        if (this.previous != null) {
+            float distance = this.getDistanceCalculator().distance(values, previous);
+            if (triggered) {
+                if (lastTimeBelowThreshold >= TIME_THRESHOLD) {
+                    this.getDevice().measuredSeries(this.timeSeries);
+                    this.timeSeries = new TimeSeries();
+                    triggered = false;
                 } else {
-                    lastTimeBelowThreshold = time;
+                    this.timeSeries.addPoint(new TimeSeriesPoint(values, time));
+                }
+            } else {
+                if (previous != null) {
+                    if (distance >= SLOPE_THRESHOLD) {
+                        this.timeSeries.addPoint(new TimeSeriesPoint(values, time));
+                    } else {
+                        lastTimeBelowThreshold = time;
+                    }
                 }
             }
-        }
 
-        if (distance < SLOPE_THRESHOLD) {
-            lastTimeBelowThreshold = time;
+            if (distance < SLOPE_THRESHOLD) {
+                lastTimeBelowThreshold = time;
+            }
         }
         previous = values;
     }
