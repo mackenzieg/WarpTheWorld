@@ -37,16 +37,9 @@ public class DifferenceEquivalenceFilter extends Filter {
 
         if (accept) {
             this.previous = vector;
-            return vector;
         }
 
-        float[] defaultVals = new float[this.getDimensions()];
-
-        for (int i = 0; i < this.getDimensions(); ++i) {
-            defaultVals[i] = 0.0f;
-        }
-
-        return defaultVals;
+        return previous;
     }
 
     @Override
