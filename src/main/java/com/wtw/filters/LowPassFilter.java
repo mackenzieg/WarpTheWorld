@@ -5,8 +5,8 @@ package com.wtw.filters;
  */
 public class LowPassFilter extends Filter {
 
-    private final double TIME_CONSTANT = 0.10;
-    private final int COUNT_BEFORE_UPDATE = 1;
+    private double TIME_CONSTANT = 0.10;
+    private int COUNT_BEFORE_UPDATE = 1;
     private float[] previous;
     private double alpha = 0.95;
     private double deltaTime = 0.0;
@@ -18,6 +18,12 @@ public class LowPassFilter extends Filter {
     public LowPassFilter(int dimensions) {
         super(dimensions);
         this.reset();
+    }
+
+    public LowPassFilter(int dimensions, double TIME_CONSTANT, int COUNT_BEFORE_UPDATE) {
+        super(dimensions);
+        this.TIME_CONSTANT = TIME_CONSTANT;
+        this.COUNT_BEFORE_UPDATE = COUNT_BEFORE_UPDATE;
     }
 
     @Override
