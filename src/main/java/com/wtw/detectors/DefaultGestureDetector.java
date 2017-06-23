@@ -16,7 +16,7 @@ public class DefaultGestureDetector extends GestureDetector {
     private float[] previous = null;
 
     public DefaultGestureDetector(DistanceCalculator distanceCalculator) {
-        this(distanceCalculator, 3.8f, 100000000);
+        this(distanceCalculator, 3.8f, 500000000);
     }
 
     public DefaultGestureDetector(DistanceCalculator distanceCalculator, float SLOPE_THRESHOLD, long TIME_THRESHOLD) {
@@ -31,7 +31,7 @@ public class DefaultGestureDetector extends GestureDetector {
         if (this.previous != null) {
             float distance = this.getDistanceCalculator().distance(values, previous);
             if (triggered) {
-                if (lastTimeBelowThreshold >= TIME_THRESHOLD) {
+                if (lastTimeBelowThreshold >= TIME_THRESHOLD + time) {
                     this.getDevice().measuredSeries(this.timeSeries);
                     this.timeSeries = new TimeSeries();
                     triggered = false;
@@ -39,16 +39,13 @@ public class DefaultGestureDetector extends GestureDetector {
                     this.timeSeries.addPoint(new TimeSeriesPoint(values, time));
                 }
             } else {
-                if (previous != null) {
-                    if (distance >= SLOPE_THRESHOLD) {
-                        this.timeSeries.addPoint(new TimeSeriesPoint(values, time));
-                    } else {
-                        lastTimeBelowThreshold = time;
-                    }
+                if (distance >= SLOPE_THRESHOLD) {
+                    triggered = true;
+                    this.timeSeries.addPoint(new TimeSeriesPoint(values, time));
                 }
             }
 
-            if (distance < SLOPE_THRESHOLD) {
+            if (distance >= SLOPE_THRESHOLD) {
                 lastTimeBelowThreshold = time;
             }
         }
