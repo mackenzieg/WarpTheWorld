@@ -26,8 +26,4 @@ public class TimeSeriesComparison {
         this.recorded = recorded;
         this.reference = reference;
     }
-
-    public boolean isDistanceSet() {
-        return this.distance != null;
-    }
 }

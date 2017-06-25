@@ -14,13 +14,4 @@ public class TimeWarpComparisonResults {
         this.results.add(result);
     }
 
-    public boolean isComplete() {
-        for (TimeSeriesComparison timeSeriesComparison : results) {
-            if (!timeSeriesComparison.isDistanceSet()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
 }

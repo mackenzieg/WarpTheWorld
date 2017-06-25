@@ -11,6 +11,7 @@ import com.wtw.event.events.StartTimeWarpEvent;
 import com.wtw.filters.DifferenceEquivalenceFilter;
 import com.wtw.filters.LowPassFilter;
 import com.wtw.timeseries.TimeSeries;
+import com.wtw.timeseries.TimeSeriesComparison;
 import com.wtw.timeseries.TimeSeriesPoint;
 import com.wtw.timewarp.SlowTimeWarpCalculator;
 
@@ -25,21 +26,24 @@ public class FullSystemTest {
         final TimeSeries compare = new TimeSeries();
 
         Random random = new Random();
-        for (int i = 0; i < 1000; ++i) {
+        for (int i = 0; i < 100; ++i) {
             compare.addPoint(new TimeSeriesPoint(new float[]{
                     random.nextFloat()}, i));
         }
 
-        TimeSeries timeSeries = new TimeSeries();
+        final TimeSeries compare1 = new TimeSeries();
+
+        for (int i = 0; i < 100; ++i) {
+            compare1.addPoint(new TimeSeriesPoint(new float[]{
+                    random.nextFloat()}, i));
+        }
+
+        final TimeSeries timeSeries = new TimeSeries();
 
         for (int i = 0; i < 200; ++i) {
             timeSeries.addPoint(new TimeSeriesPoint(new float[]{
                     random.nextFloat()}, i));
         }
-
-        final AtomicReference<TimeSeries> cache = new AtomicReference<>();
-
-        cache.set(timeSeries);
 
         BuiltDevice builtDevice = new Device()
                 .addCompressor(new MeanCompressor(5))
@@ -49,25 +53,25 @@ public class FullSystemTest {
                 .setTimeWarpCalculator(new SlowTimeWarpCalculator(new AbsoluteDistance()))
                 .registerListener(new EventListener() {
                     @EventHandler
-                    public void getCompressed(PostCompressionEvent postCompressionEvent) {
-                        System.out.println("After");
-                        cache.set(postCompressionEvent.getAfter());
-                        System.out.println(postCompressionEvent.getAfter().toString());
-                    }
-
-                    @EventHandler
                     public void postTimeWarp(PostTimeWarpEvent postTimeWarpEvent) {
-                        System.out.println(postTimeWarpEvent.getTimeWarpComparisonResults().getResults().toArray().toString());
+                        float lowestSum = 100000.0f;
+                        TimeSeriesComparison lowest = null;
+                        for (TimeSeriesComparison timeSeriesComparison : postTimeWarpEvent.getTimeWarpComparisonResults().getResults()) {
+                            if (lowestSum >= timeSeriesComparison.getDistance()) {
+                                lowestSum = timeSeriesComparison.getDistance();
+                                lowest = timeSeriesComparison;
+                            }
+                        }
+
+                        System.out.println(String.format("Lowest sum: %f", lowestSum));
                     }
 
                     @EventHandler
                     public void compare(StartTimeWarpEvent startTimeWarpEvent) {
                         startTimeWarpEvent.addComparison(compare);
+                        startTimeWarpEvent.addComparison(compare1);
                     }
                 }).build().setStartCompression(true).setStartTimeWarp(true);
-
-        System.out.println("Before");
-        System.out.println(timeSeries.toString());
 
         builtDevice.measuredSeries(timeSeries);
 

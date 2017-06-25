@@ -2,7 +2,6 @@ package com.wtw.timewarp;
 
 import com.wtw.distance.DistanceCalculator;
 import com.wtw.timeseries.TimeSeries;
-import com.wtw.timeseries.TimeSeriesComparison;
 
 public class SlowTimeWarpCalculator extends TimeSeriesDistanceCalculator {
 
@@ -13,11 +12,7 @@ public class SlowTimeWarpCalculator extends TimeSeriesDistanceCalculator {
         super(distanceCalculator);
     }
 
-    public void distance(TimeSeriesComparison timeSeriesComparison) {
-
-        TimeSeries recorded = timeSeriesComparison.getRecorded();
-        TimeSeries reference = timeSeriesComparison.getReference();
-
+    public float distance(TimeSeries recorded, TimeSeries reference) {
         this.matrix = new float[recorded.getPoint(0).size()][recorded.size() + 1][reference.size() + 1];
         this.distance = new float[recorded.getPoint(0).size()][recorded.size()][reference.size()];
 
@@ -64,8 +59,7 @@ public class SlowTimeWarpCalculator extends TimeSeriesDistanceCalculator {
         for (int i = 0; i < numDimensions; ++i) {
             singleSum += sum[i];
         }
-
-        timeSeriesComparison.setDistance(singleSum);
+        return singleSum;
     }
 
     public float computeBackward(int dimension, int i, int j) {

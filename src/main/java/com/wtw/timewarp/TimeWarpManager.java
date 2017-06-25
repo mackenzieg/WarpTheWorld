@@ -3,15 +3,15 @@ package com.wtw.timewarp;
 import com.google.common.base.Preconditions;
 import com.wtw.event.EventBus;
 import com.wtw.event.events.PostTimeWarpEvent;
-import com.wtw.timeseries.TimeSeries;
 import com.wtw.timeseries.TimeSeriesComparison;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.List;
+import java.util.concurrent.*;
 
 // TODO eventually generalize this
 public class TimeWarpManager extends Thread {
@@ -45,7 +45,7 @@ public class TimeWarpManager extends Thread {
         while (this.started) {
             if (queued.size() == 0) {
                 try {
-                    Thread.sleep(5);
+                    Thread.sleep(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -56,18 +56,32 @@ public class TimeWarpManager extends Thread {
 
             final TimeWarpComparisonResults timeWarpComparisonResults = queued.removeFirst();
 
-            for (final TimeSeriesComparison timeSeriesComparison : timeWarpComparisonResults.getResults()) {
-                pool.submit(new Runnable() {
+
+            // TODO clean this up where Callable returns a TimeSeriesComparison instead
+            final Collection<Callable<TimeSeriesComparison>> tasks = new ArrayList<>();
+            for (int i = 0; i < timeWarpComparisonResults.getResults().size(); i++) {
+                final TimeSeriesComparison timeSeriesComparison = timeWarpComparisonResults.getResults().get(i);
+                tasks.add(new Callable<TimeSeriesComparison>() {
                     @Override
-                    public void run() {
-                        timeSeriesDistanceCalculator.distance(timeSeriesComparison);
-                        if (timeWarpComparisonResults.isComplete()) {
-                            PostTimeWarpEvent postTimeWarpEvent = new PostTimeWarpEvent(timeWarpComparisonResults);
-                            eventBus.post(postTimeWarpEvent);
-                        }
+                    public TimeSeriesComparison call() throws Exception {
+                        return timeSeriesDistanceCalculator.calculateDistance(timeSeriesComparison);
                     }
                 });
             }
+
+            TimeWarpComparisonResults completedWarp = new TimeWarpComparisonResults();
+
+            try {
+                List<Future<TimeSeriesComparison>> futures = pool.invokeAll(tasks);
+                for (Future future : futures) {
+                    completedWarp.addComparison((TimeSeriesComparison) future.get());
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+
+            PostTimeWarpEvent postTimeWarpEvent = new PostTimeWarpEvent(completedWarp);
+            eventBus.post(postTimeWarpEvent);
         }
     }
 }
