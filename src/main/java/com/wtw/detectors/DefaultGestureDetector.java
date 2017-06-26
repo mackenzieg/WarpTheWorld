@@ -33,7 +33,7 @@ public class DefaultGestureDetector extends GestureDetector {
             float distance = this.getDistanceCalculator().distance(values, this.previous);
             if(this.triggered) {
                 if(this.lastTimeBelowThreshold + this.TIME_THRESHOLD <= currentTime) {
-                    this.getDevice().measuredSeries(this.timeSeries);
+                    this.getDevice().measuredSeries(new TimeSeries(this.timeSeries));
                     this.timeSeries = new TimeSeries();
                     this.triggered = false;
                 } else {

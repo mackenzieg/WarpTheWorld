@@ -17,7 +17,6 @@ import com.wtw.timewarp.SlowTimeWarpCalculator;
 
 import java.util.EventListener;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class FullSystemTest {
 
